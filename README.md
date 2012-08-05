@@ -2,6 +2,14 @@
 
 A library for generating RSS feeds from Clojure
 
+## Installation
+
+Leiningen
+
+```clojure
+[clj-rss "0.1.0"]
+```
+
 ## Usage
 
 The library provides a `channel` function which accepts a map of channel tags followed by 0 or more items. 
