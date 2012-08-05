@@ -29,6 +29,8 @@ Creating items with complex tags:
 
 The output XML can be validated at http://validator.w3.org/feed/#validate_by_input
 
+For more information on valid RSS tags and their content please refer to the official RSS 2.0 specification http://cyber.law.harvard.edu/rss/rss.html
+
 ## License
 
 Copyright © 2012 FIXME
