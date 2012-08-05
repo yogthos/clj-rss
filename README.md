@@ -12,29 +12,37 @@ Leiningen
 
 ## Usage
 
-The library provides a `channel` function which accepts a map of channel tags followed by 0 or more items. 
+`channel-xml` function which accepts a map of channel tags followed by 0 or more items and outputs an XML string. 
 Each item must be a map of valid RSS tags. 
 Following characters in the Content of :description and :title tags will be escaped: <, &, >
 pubDate and lastBuildDate must be instances of java.util.Date
 
+If you need to get the data in a structured format use `channel` instead.
+ 
 ### Examples
 
 Creating a channel with a some items
 
-```Clojure
+```clojure
 (require '[clj-rss.core :as rss])
 
-(rss/channel {:title "Foo" :link "http://foo/bar" :description "some channel"}
-                     {:title "Foo"}
-                     {:title "post" :author "author@foo.bar"}
-                     {:description "bar"})
+(rss/channel-xml {:title "Foo" :link "http://foo/bar" :description "some channel"}
+                         {:title "Foo"}
+                         {:title "post" :author "author@foo.bar"}
+                         {:description "bar"})
 ```
 
 Creating items with complex tags:
-```Clojure
+```clojure
+(rss/channel-xml {:title "Foo" :link "http://foo/bar" :description "some channel"}
+                         {:title "test"
+                          :category [{:domain "http://www.foo.com/bar"} "BAZ"]})
+```
+
+to get the raw data structure use:
+```clojure
 (rss/channel {:title "Foo" :link "http://foo/bar" :description "some channel"}
-                     {:title "test"
-                      :category [{:domain "http://www.foo.com/bar"} "BAZ"]})
+                     {:title "test"})
 ```
 
 The output XML can be validated at http://validator.w3.org/feed/#validate_by_input

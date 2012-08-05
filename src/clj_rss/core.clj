@@ -61,7 +61,7 @@
 (defn- make-tags [tags] 
   (for [[k v] (seq tags)]
     (if (coll? v)      
-      (apply-macro tag (into [k] v))
+      (apply-macro clj-rss.core/tag (into [k] v))
       (tag k (cond 
                (some #{k} [:pubDate :lastBuildDate]) (format-time v)
                (some #{k} [:description :title]) (xml-str v)             
@@ -98,12 +98,14 @@
   official RSS specification: http://cyber.law.harvard.edu/rss/rss.html"
   [tags & items]
   (validate-channel tags :title :link :description)
-  (with-out-str
-    (emit
-      {:tag :rss
-       :attrs {:version "2.0"}
-       :content
-       [{:tag :channel
-         :attrs nil
-         :content (concat (make-tags (conj tags {:generator "clj-rss"})) (map item items))}]})))
+  {:tag :rss
+   :attrs {:version "2.0"}
+   :content
+   [{:tag :channel
+     :attrs nil
+     :content (concat (make-tags (conj tags {:generator "clj-rss"})) (map item items))}]})
 
+(defn channel-xml
+  "channel accepts a map of tags followed by 0 or more items and outputs an XML string, see channel docs for detailed description"
+  [& content]
+  (with-out-str (emit (apply channel content))))
