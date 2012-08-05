@@ -14,7 +14,7 @@ Leiningen
 
 `channel-xml` function which accepts a map of channel tags followed by 0 or more items and outputs an XML string. 
 Each item must be a map of valid RSS tags. 
-Following characters in the Content of :description and :title tags will be escaped: <, &, >
+Following characters in the content of :description and :title tags will be escaped: <, &, >, "
 pubDate and lastBuildDate must be instances of java.util.Date
 
 If you need to get the data in a structured format use `channel` instead.

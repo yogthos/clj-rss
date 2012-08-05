@@ -9,7 +9,7 @@
 
 (defn- xml-str [s]
   (if s
-    (-> s (.replace "&" "&amp;") (.replace "<" "&lt;") (.replace ">" "&gt;"))
+    (-> s (.replace "&" "&amp;") (.replace "<" "&lt;") (.replace ">" "&gt;") (.replace "\"" "&quot;"))
     ""))
 
 (defmacro tag [id & xs]
