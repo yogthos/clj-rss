@@ -16,7 +16,7 @@ Creating a channel with a some items
 ```Clojure
 (channel {:title "Foo" :link "http://foo/bar" :description "some channel"}
                  {:title "Foo"}
-                 {:title "post" :author "Yogthos"}
+                 {:title "post" :author "author@foo.bar"}
                  {:description "bar"})
 ```
 
