@@ -22,17 +22,19 @@ pubDate and lastBuildDate must be instances of java.util.Date
 Creating a channel with a some items
 
 ```Clojure
-(channel {:title "Foo" :link "http://foo/bar" :description "some channel"}
-                 {:title "Foo"}
-                 {:title "post" :author "author@foo.bar"}
-                 {:description "bar"})
+(require '[clj-rss.core :as rss])
+
+(rss/channel {:title "Foo" :link "http://foo/bar" :description "some channel"}
+                     {:title "Foo"}
+                     {:title "post" :author "author@foo.bar"}
+                     {:description "bar"})
 ```
 
 Creating items with complex tags:
 ```Clojure
-(channel {:title "Foo" :link "http://foo/bar" :description "some channel"}
-                 {:title "test"
-                  :category [{:domain "http://www.foo.com/bar"} "BAZ"]})
+(rss/channel {:title "Foo" :link "http://foo/bar" :description "some channel"}
+                     {:title "test"
+                      :category [{:domain "http://www.foo.com/bar"} "BAZ"]})
 ```
 
 The output XML can be validated at http://validator.w3.org/feed/#validate_by_input
@@ -41,6 +43,6 @@ For more information on valid RSS tags and their content please refer to the off
 
 ## License
 
-Copyright © 2012 FIXME
+Copyright �� 2012 FIXME
 
 Distributed under the Eclipse Public License, the same as Clojure.
