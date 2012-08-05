@@ -27,29 +27,29 @@ Creating a channel with a some items
 (require '[clj-rss.core :as rss])
 
 (rss/channel-xml {:title "Foo" :link "http://foo/bar" :description "some channel"}
-                         {:title "Foo"}
-                         {:title "post" :author "author@foo.bar"}
-                         {:description "bar"})
+                 {:title "Foo"}
+                 {:title "post" :author "author@foo.bar"}
+                 {:description "bar"})
 ```
 
 Creating items with complex tags:
 ```clojure
 (rss/channel-xml {:title "Foo" :link "http://foo/bar" :description "some channel"}
-                         {:title "test"
-                          :category [{:domain "http://www.foo.com/bar"} "BAZ"]})
+                 {:title "test"
+                  :category [{:domain "http://www.foo.com/bar"} "BAZ"]})
 ```
 
 to get the raw data structure use:
 ```clojure
 (rss/channel {:title "Foo" :link "http://foo/bar" :description "some channel"}
-                     {:title "test"})
+             {:title "test"})
 ```
 
 pass in `false` as first parameter to disable content validation:
 ```clojure
 (rss/channel-xml false {:title "Foo" :link "http://foo/bar" :description "some channel"}
-                               {:title "test"
-                                :category [{:domain "http://www.foo.com/bar"} "BAZ"]})
+                       {:title "test"
+                        :category [{:domain "http://www.foo.com/bar"} "BAZ"]})
                                 
 (rss/channel false {:title "Foo" :link "http://foo/bar" :description "some channel"}
                    {:title "test"})
