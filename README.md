@@ -7,7 +7,7 @@ A library for generating RSS feeds from Clojure
 Leiningen
 
 ```clojure
-[clj-rss "0.1.1"]
+[clj-rss "0.1.2"]
 ```
 
 ## Usage
@@ -44,6 +44,16 @@ to get the raw data structure use:
 (rss/channel {:title "Foo" :link "http://foo/bar" :description "some channel"}
                      {:title "test"})
 ```
+
+pass in `false` as first parameter to disable content validation:
+```clojure
+(rss/channel-xml false {:title "Foo" :link "http://foo/bar" :description "some channel"}
+                               {:title "test"
+                                :category [{:domain "http://www.foo.com/bar"} "BAZ"]})
+                                
+(rss/channel false {:title "Foo" :link "http://foo/bar" :description "some channel"}
+                   {:title "test"})
+``` 
 
 The output XML can be validated at http://validator.w3.org/feed/#validate_by_input
 

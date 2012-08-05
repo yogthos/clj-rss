@@ -68,13 +68,13 @@
                :else v)))))
 
 
-(defn- item [tags] 
-  (validate-item tags)
+(defn- item [validate? tags] 
+  (if validate? (validate-item tags))
   {:tag :item
    :attrs nil
    :content (make-tags tags)})
 
-(defn channel
+(defn- channel'
   "channel accepts a map of tags followed by 0 or more items
 
   channel:
@@ -96,16 +96,22 @@
    :content (\"MSFT\")}
 
   official RSS specification: http://cyber.law.harvard.edu/rss/rss.html"
-  [tags & items]
-  (validate-channel tags :title :link :description)
+  [validate? tags & items]
+  (if validate? (validate-channel tags :title :link :description))
   {:tag :rss
-   :attrs {:version "2.0"}
+   :attrs {:version "2.0"}   
    :content
    [{:tag :channel
      :attrs nil
-     :content (concat (make-tags (conj tags {:generator "clj-rss"})) (map item items))}]})
+     :content (concat (make-tags (conj tags {:generator "clj-rss"})) (map (partial item validate?) items))}]})
+
+(defn channel [& content]
+  (if (map? (first content))
+    (apply channel' (cons true content))
+    (apply channel' content)))
 
 (defn channel-xml
   "channel accepts a map of tags followed by 0 or more items and outputs an XML string, see channel docs for detailed description"
   [& content]
   (with-out-str (emit (apply channel content))))
+

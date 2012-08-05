@@ -41,3 +41,16 @@
          (channel-xml {:title "Foo" :link "http://foo/bar" :description "some channel"}
                   {:title "test"
                    :category [{:domain "http://www.fool.com/cusips"} "MSFT"]}))))
+
+(deftest validation-on
+  (is 
+    (thrown? Exception
+             (channel-xml true 
+                          {:title "Foo" :description "Foo" :link "http://foo/bar"}
+                          {:foo "Foo"}))))
+
+(deftest validation-off
+  (is(= "<?xml version='1.0' encoding='UTF-8'?>\n<rss version='2.0'>\n<channel>\n<generator>\nclj-rss\n</generator>\n<link>\nhttp://foo/bar\n</link>\n<title>\nFoo\n</title>\n<description>\nFoo\n</description>\n<item>\n<foo>\nFoo\n</foo>\n</item>\n</channel>\n</rss>\n"
+        (channel-xml false 
+                     {:title "Foo" :description "Foo" :link "http://foo/bar"}
+                     {:foo "Foo"}))))
