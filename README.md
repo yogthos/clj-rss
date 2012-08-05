@@ -51,6 +51,6 @@ For more information on valid RSS tags and their content please refer to the off
 
 ## License
 
-Copyright Yogthos 2012 FIXME
+Copyright Yogthos 2012
 
 Distributed under the Eclipse Public License, the same as Clojure.
