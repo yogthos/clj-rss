@@ -55,7 +55,7 @@ pass in `false` as first parameter to disable content validation:
                    {:title "test"})
 ``` 
 
-Note that when using `:pubDate` and `:lastBuildDate` keys, they're expected to be `java,util.Date` 
+Note that when using `:pubDate` and `:lastBuildDate` keys, they're expected to be `java.util.Date` 
 or one of its subclasses. These will be converted to standard RSS date strings in the resulting XML.
 
 The output XML can be validated at http://validator.w3.org/feed/#validate_by_input
