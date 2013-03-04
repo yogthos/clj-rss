@@ -1,7 +1,7 @@
-(ns clj-rss.core(:use [clojure.xml :only [emit]]
-                      [clojure.set :only [difference]])
-  (:require [clojure.xml :as xml]
-            [clojure.string :as string])
+(ns clj-rss.core 
+  (:use [clojure.xml :only [emit]]
+        [clojure.set :only [difference]])
+  (:require [clojure.string :as string])
   (:import java.util.Date java.text.SimpleDateFormat))
 
 (defn- format-time [t]
