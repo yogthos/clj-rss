@@ -1,7 +1,7 @@
 (ns clj-rss.core 
   (:use [clojure.xml :only [emit]]
-        [clojure.set :only [difference]])
-  (:require [clojure.string :as string])
+        [clojure.set :only [difference]]
+        [clojure.string :only [escape]])  
   (:import java.util.Date java.text.SimpleDateFormat))
 
 (defn- format-time [t]
@@ -14,7 +14,7 @@
                    \> "&gt;",
                    \& "&amp;",
                    \" "&quot;"}]
-      (string/escape s escapes))))
+      (escape s escapes))))
 
 (defmacro tag [id & xs]
   `(let [attrs# (map? (first '~xs))
