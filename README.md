@@ -13,8 +13,11 @@ Leiningen
 ## Usage
 
 `channel-xml` function which accepts a map of tags representing a channel followed by 0 or more maps for items and outputs an XML string. 
-Each item must be a map of valid RSS tags. Following characters in the content of :description and :title tags will be escaped: <, &, >, "
-pubDate and lastBuildDate must be instances of java.util.Date
+Each item must be a map of valid RSS tags. 
+
+Following characters in the content of :description and :title tags will be escaped: `<`, `&`, `>`, `"`. Both `:pubDate` and `:lastBuildDate` keys are expected to be instances of `java.util.Date` 
+or one of its subclasses. These will be converted to standard RSS date strings in the resulting XML.
+
 
 If you need to get the data in a structured format use `channel` instead.
  
@@ -53,9 +56,6 @@ pass in `false` as first parameter to disable content validation:
 (rss/channel false {:title "Foo" :link "http://foo/bar" :description "some channel"}
                    {:title "test"})
 ``` 
-
-Note that when using `:pubDate` and `:lastBuildDate` keys, they're expected to be `java.util.Date` 
-or one of its subclasses. These will be converted to standard RSS date strings in the resulting XML.
 
 The output XML can be validated at http://validator.w3.org/feed/#validate_by_input
 
