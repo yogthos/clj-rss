@@ -2,6 +2,8 @@
 
 A library for generating RSS feeds from Clojure
 
+[![Continuous Integration status](https://secure.travis-ci.org/yogthos/clj-rss.png)](http://travis-ci.org/yogthos/clj-rss)
+
 ## Installation
 
 Leiningen
