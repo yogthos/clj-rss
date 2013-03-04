@@ -9,7 +9,7 @@ A library for generating RSS feeds from Clojure
 Leiningen
 
 ```clojure
-[clj-rss "0.1.2"]
+[clj-rss "0.1.3"]
 ```
 
 ## Usage
