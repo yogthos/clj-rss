@@ -12,7 +12,7 @@ Leiningen
 
 ## Usage
 
-`channel-xml` function which accepts a map of tags representing a channel followed by 0 or more items and outputs an XML string. 
+`channel-xml` function which accepts a map of tags representing a channel followed by 0 or more maps for items and outputs an XML string. 
 Each item must be a map of valid RSS tags. Following characters in the content of :description and :title tags will be escaped: <, &, >, "
 pubDate and lastBuildDate must be instances of java.util.Date
 
