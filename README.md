@@ -8,9 +8,7 @@ A library for generating RSS feeds from Clojure
 
 Leiningen
 
-```clojure
-[clj-rss "0.1.3"]
-```
+!["Leiningen version"](https://clojars.org/clj-rss/latest-version.svg)
 
 ## Usage
 
