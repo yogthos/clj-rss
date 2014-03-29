@@ -4,7 +4,7 @@
 
 (deftest proper-message
   (is
-    (= "<?xml version='1.0' encoding='UTF-8'?>\n<rss version='2.0'>\n<channel>\n<generator>\nclj-rss\n</generator>\n<link>\nhttp://foo/bar\n</link>\n<title>\nFoo\n</title>\n<description>\nsome channel\n</description>\n<item>\n<title>\nFoo\n</title>\n</item>\n<item>\n<author>\nYogthos\n</author>\n<title>\npost\n</title>\n</item>\n<item>\n<description>\nbar\n</description>\n</item>\n</channel>\n</rss>\n"
+    (= "<?xml version='1.0' encoding='UTF-8'?>\n<rss version='2.0'>\n<channel>\n<generator>\nclj-rss\n</generator>\n<description>\nsome channel\n</description>\n<title>\nFoo\n</title>\n<link>\nhttp://foo/bar\n</link>\n<item>\n<title>\nFoo\n</title>\n</item>\n<item>\n<title>\npost\n</title>\n<author>\nYogthos\n</author>\n</item>\n<item>\n<description>\nbar\n</description>\n</item>\n</channel>\n</rss>\n"
        (channel-xml {:title "Foo" :link "http://foo/bar" :description "some channel"}
                 {:title "Foo"}
                 {:title "post" :author "Yogthos"}
@@ -45,7 +45,7 @@
                       {:link "http://foo"}))))
 
 (deftest complex-tag
-  (is (= "<?xml version='1.0' encoding='UTF-8'?>\n<rss version='2.0'>\n<channel>\n<generator>\nclj-rss\n</generator>\n<link>\nhttp://foo/bar\n</link>\n<title>\nFoo\n</title>\n<description>\nsome channel\n</description>\n<item>\n<title>\ntest\n</title>\n<category domain='http://www.fool.com/cusips'>\nMSFT\n</category>\n</item>\n</channel>\n</rss>\n"
+  (is (= "<?xml version='1.0' encoding='UTF-8'?>\n<rss version='2.0'>\n<channel>\n<generator>\nclj-rss\n</generator>\n<description>\nsome channel\n</description>\n<title>\nFoo\n</title>\n<link>\nhttp://foo/bar\n</link>\n<item>\n<category domain='http://www.fool.com/cusips'>\nMSFT\n</category>\n<title>\ntest\n</title>\n</item>\n</channel>\n</rss>\n"
          (channel-xml {:title "Foo" :link "http://foo/bar" :description "some channel"}
                   {:title "test"
                    :category [{:domain "http://www.fool.com/cusips"} "MSFT"]}))))
@@ -58,7 +58,7 @@
                           {:foo "Foo"}))))
 
 (deftest validation-off
-  (is(= "<?xml version='1.0' encoding='UTF-8'?>\n<rss version='2.0'>\n<channel>\n<generator>\nclj-rss\n</generator>\n<link>\nhttp://foo/bar\n</link>\n<title>\nFoo\n</title>\n<description>\nFoo\n</description>\n<item>\n<foo>\nFoo\n</foo>\n</item>\n</channel>\n</rss>\n"
+  (is(= "<?xml version='1.0' encoding='UTF-8'?>\n<rss version='2.0'>\n<channel>\n<generator>\nclj-rss\n</generator>\n<description>\nFoo\n</description>\n<title>\nFoo\n</title>\n<link>\nhttp://foo/bar\n</link>\n<item>\n<foo>\nFoo\n</foo>\n</item>\n</channel>\n</rss>\n"
         (channel-xml false
                      {:title "Foo" :description "Foo" :link "http://foo/bar"}
                      {:foo "Foo"}))))
