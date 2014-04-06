@@ -107,7 +107,7 @@
    :content
    [{:tag :channel
      :attrs nil
-     :content (concat (make-tags (conj tags {:generator "clj-rss"})) (map (partial item validate?) items))}]})
+     :content (concat (make-tags (conj tags {:generator "clj-rss"})) (map (partial item validate?) (flatten items)))}]})
 
 (defn channel [& content]
   (cond
