@@ -1,7 +1,7 @@
 (ns clj-rss.core
   (:use [clojure.xml :only [emit]]
         [clojure.set :only [difference]]
-        [clojure.string :only [escape]])
+        [clojure.string :only [escape join]])
   (:import java.util.Date java.text.SimpleDateFormat))
 
 (defn- format-time [t]
@@ -33,7 +33,7 @@
 (defn- validate-tags [tags valid-tags]
   (let [diff (difference (set tags) valid-tags)]
     (when (not-empty diff)
-      (throw (new Exception (str "unrecognized tags in channel " (apply str diff)))))))
+      (throw (new Exception (str "unrecognized tags in channel: " (join ", " diff)))))))
 
 (defn- validate-channel [tags & ks]
   (doseq [k ks]
