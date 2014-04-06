@@ -58,7 +58,7 @@
                           {:foo "Foo"}))))
 
 (deftest validation-off
-  (is(= "<?xml version='1.0' encoding='UTF-8'?>\n<rss version='2.0'>\n<channel>\n<generator>\nclj-rss\n</generator>\n<description>\nFoo\n</description>\n<title>\nFoo\n</title>\n<link>\nhttp://foo/bar\n</link>\n<item>\n<foo>\nFoo\n</foo>\n</item>\n</channel>\n</rss>\n"
+  (is (= "<?xml version='1.0' encoding='UTF-8'?>\n<rss version='2.0'>\n<channel>\n<generator>\nclj-rss\n</generator>\n<description>\nFoo\n</description>\n<title>\nFoo\n</title>\n<link>\nhttp://foo/bar\n</link>\n<item>\n<foo>\nFoo\n</foo>\n</item>\n</channel>\n</rss>\n"
         (channel-xml false
                      {:title "Foo" :description "Foo" :link "http://foo/bar"}
                      {:foo "Foo"}))))
