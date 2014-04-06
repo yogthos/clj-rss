@@ -12,19 +12,17 @@ Leiningen
 
 ## Usage
 
-`channel-xml` function which accepts a map of tags representing a channel followed by 0 or more maps for items and outputs an XML string. 
-Each item must be a map of valid RSS tags. 
+The `channel-xml` function accepts a map of tags representing a channel, followed by 0 or more maps for items (or a seq of items) and outputs an XML string. 
+Each item must be a map of valid RSS tags.
 
-Following characters in the content of :description and :title tags will be escaped: `<`, `&`, `>`, `"`. Both `:pubDate` and `:lastBuildDate` keys are expected to be instances of `java.util.Date` 
+The following characters in the content of :description and :title tags will be escaped: `<`, `&`, `>`, `"`. Both `:pubDate` and `:lastBuildDate` keys are expected to be instances of `java.util.Date` 
 or one of its subclasses. These will be converted to standard RSS date strings in the resulting XML.
 
-
-If you need to get the data in a structured format use `channel` instead.
+If you need to get the data in a structured format, use `channel` instead.
  
 ### Examples
 
-Creating a channel with a some items
-
+Creating a channel with some items:
 ```clojure
 (require '[clj-rss.core :as rss])
 
@@ -34,6 +32,13 @@ Creating a channel with a some items
                  {:description "bar"})
 ```
 
+Creating a feed from a seq of items:
+```clojure
+(let [items '({:title "Foo"} {:title "Bar"} {:title "Baz"})]
+  (rss/channel {:title "Foo" :link "http://foo/bar" :description "some channel"}
+               items))
+```
+
 Creating items with complex tags:
 ```clojure
 (rss/channel-xml {:title "Foo" :link "http://foo/bar" :description "some channel"}
@@ -41,13 +46,13 @@ Creating items with complex tags:
                   :category [{:domain "http://www.foo.com/bar"} "BAZ"]})
 ```
 
-to get the raw data structure use:
+To get the raw data structure use:
 ```clojure
 (rss/channel {:title "Foo" :link "http://foo/bar" :description "some channel"}
              {:title "test"})
 ```
 
-pass in `false` as first parameter to disable content validation:
+Pass in `false` as first parameter to disable content validation:
 ```clojure
 (rss/channel-xml false {:title "Foo" :link "http://foo/bar" :description "some channel"}
                        {:title "test"
