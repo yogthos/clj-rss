@@ -101,13 +101,20 @@
 
   official RSS specification: http://cyber.law.harvard.edu/rss/rss.html"
   [validate? tags & items]
-  (if validate? (validate-channel tags :title :link :description))
+  (when validate? (validate-channel tags :title :link :description))
   {:tag :rss
-   :attrs {:version "2.0"}
+   :attrs {:version "2.0"
+           "xmlns:atom" "http://www.w3.org/2005/Atom"}
    :content
    [{:tag :channel
      :attrs nil
-     :content (concat (make-tags (conj tags {:generator "clj-rss"})) (map (partial item validate?) (flatten items)))}]})
+     :content (concat
+               [{:tag "atom:link"
+                 :attrs {:href (:link tags)
+                         :rel "self"
+                         :type "application/rss+xml"}}]
+               (make-tags (conj tags {:generator "clj-rss"}))
+               (map (partial item validate?) (flatten items)))}]})
 
 (defn channel [& content]
   (cond
