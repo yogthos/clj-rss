@@ -29,6 +29,10 @@
 (defmacro apply-macro [macro args]
    `(apply (functionize ~macro) ~args))
 
+(defn dissoc-nil [map]
+  "Returns a map containing only those entries in m whose val is not nil"
+  (let [non-nil-keys (for [[k v] map :when (not (nil? v))] k)]
+    (select-keys map non-nil-keys)))
 
 (defn- validate-tags [tags valid-tags]
   (let [diff (difference (set tags) valid-tags)]
@@ -73,10 +77,10 @@
 
 
 (defn- item [validate? tags]
-  (if validate? (validate-item tags))
+  (if validate? (validate-item (dissoc-nil tags)))
   {:tag :item
    :attrs nil
-   :content (make-tags tags)})
+   :content (make-tags (dissoc-nil tags))})
 
 (defn- channel'
   "channel accepts a map of tags followed by 0 or more items
@@ -109,12 +113,15 @@
    [{:tag :channel
      :attrs nil
      :content (concat
-               [{:tag "atom:link"
-                 :attrs {:href (:link tags)
-                         :rel "self"
-                         :type "application/rss+xml"}}]
-               (make-tags (conj tags {:generator "clj-rss"}))
-               (map (partial item validate?) (flatten items)))}]})
+                [{:tag "atom:link"
+                  :attrs {:href (:link tags)
+                          :rel "self"
+                          :type "application/rss+xml"}}]
+                (make-tags (conj tags {:generator "clj-rss"}))
+                (->> items
+                     flatten
+                     (map dissoc-nil)
+                     (map (partial item validate?))))}]})
 
 (defn channel [& content]
   (cond

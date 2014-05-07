@@ -8,9 +8,11 @@
        (channel-xml {:title "Foo" :link "http://foo/bar" :description "some channel"}
                     {:title "Foo"}
                     {:title "post" :author "Yogthos"}
-                    {:description "bar"})))
-  (is
-    (= "<?xml version='1.0' encoding='UTF-8'?>\n<rss version='2.0' xmlns:atom='http://www.w3.org/2005/Atom'>\n<channel>\n<atom:link href='http://foo/bar' rel='self' type='application/rss+xml'/>\n<generator>\nclj-rss\n</generator>\n<description>\nsome channel\n</description>\n<title>\nFoo\n</title>\n<link>\nhttp://foo/bar\n</link>\n<item>\n<title>\nFoo\n</title>\n</item>\n<item>\n<title>\npost\n</title>\n<author>\nYogthos\n</author>\n</item>\n<item>\n<description>\nbar\n</description>\n</item>\n</channel>\n</rss>\n"
+                    {:description "bar"})
+       (channel-xml {:title "Foo" :link "http://foo/bar" :description "some channel"}
+                    {:title "Foo" :link nil :enclosure nil}
+                    {:title "post" :author "Yogthos"}
+                    {:description "bar"})
        (channel-xml {:title "Foo" :link "http://foo/bar" :description "some channel"}
                     [{:title "Foo"}
                      {:title "post" :author "Yogthos"}
@@ -68,3 +70,8 @@
         (channel-xml false
                      {:title "Foo" :description "Foo" :link "http://foo/bar"}
                      {:foo "Foo"}))))
+
+(deftest test-dissoc-nil
+  (is (= {:title "Foo" :description "Bar"}
+         (dissoc-nil {:title "Foo" :description "Bar"
+                      :link nil :category nil}))))
