@@ -29,9 +29,10 @@
 (defmacro apply-macro [macro args]
    `(apply (functionize ~macro) ~args))
 
-(defn dissoc-nil [m]
-  (let [non-nil-keys (for [[k v] m :when (not (nil? v))] k)]
-    (select-keys m non-nil-keys)))
+(defn dissoc-nil [map]
+  "Returns a map containing only those entries in m whose val is not nil"
+  (let [non-nil-keys (for [[k v] map :when (not (nil? v))] k)]
+    (select-keys map non-nil-keys)))
 
 (defn- validate-tags [tags valid-tags]
   (let [diff (difference (set tags) valid-tags)]
