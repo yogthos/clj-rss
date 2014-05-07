@@ -12,7 +12,8 @@
        (channel-xml {:title "Foo" :link "http://foo/bar" :description "some channel"}
                     {:title "Foo" :link nil :enclosure nil}
                     {:title "post" :author "Yogthos"}
-                    {:description "bar"})(channel-xml {:title "Foo" :link "http://foo/bar" :description "some channel"}
+                    {:description "bar"})
+       (channel-xml {:title "Foo" :link "http://foo/bar" :description "some channel"}
                     [{:title "Foo"}
                      {:title "post" :author "Yogthos"}
                      {:description "bar"}]))))
