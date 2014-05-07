@@ -66,3 +66,8 @@
         (channel-xml false
                      {:title "Foo" :description "Foo" :link "http://foo/bar"}
                      {:foo "Foo"}))))
+
+(deftest test-dissoc-nil
+  (is (= {:title "Foo" :description "Bar"}
+         (dissoc-nil {:title "Foo" :description "Bar"
+                      :link nil :category nil}))))
