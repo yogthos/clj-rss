@@ -8,13 +8,19 @@
   (when t
     (.format (new SimpleDateFormat "EEE, dd MMM yyyy HH:mm:ss ZZZZ") t)))
 
-(defn- xml-str [s]
-  (if s
-    (let [escapes {\< "&lt;",
-                   \> "&gt;",
-                   \& "&amp;",
-                   \" "&quot;"}]
-      (escape s escapes))))
+(defn- xml-str
+  "Returns a string suitable for inclusion as an XML element. If the string
+  is wrapped in <![CDATA[ ... ]]>, do not escape special characters."
+  [^String s]
+  (if (and (.startsWith s "<![CDATA[")
+           (.endsWith s "]]>"))
+    s
+    (if s
+      (let [escapes {\< "&lt;",
+                     \> "&gt;",
+                     \& "&amp;",
+                     \" "&quot;"}]
+        (escape s escapes)))))
 
 (defmacro tag [id & xs]
   `(let [attrs# (map? (first '~xs))
