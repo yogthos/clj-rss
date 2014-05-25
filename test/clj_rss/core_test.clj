@@ -58,6 +58,11 @@
                   {:title "test"
                    :category [{:domain "http://www.fool.com/cusips"} "MSFT"]}))))
 
+(deftest cdata-tag
+  (is (= "<?xml version='1.0' encoding='UTF-8'?>\n<rss version='2.0' xmlns:atom='http://www.w3.org/2005/Atom'>\n<channel>\n<atom:link href='http://foo/bar' rel='self' type='application/rss+xml'/>\n<generator>\nclj-rss\n</generator>\n<description>\nsome channel\n</description>\n<title>\nFoo\n</title>\n<link>\nhttp://foo/bar\n</link>\n<item>\n<description>\n<![CDATA[ <h1><a href='http://foo/bar'>Foo</a></h1> ]]>\n</description>\n<title>\nHTML Item\n</title>\n</item>\n</channel>\n</rss>\n"
+         (channel-xml {:title "Foo" :link "http://foo/bar" :description "some channel"}
+                           {:title "HTML Item" :description "<![CDATA[ <h1><a href='http://foo/bar'>Foo</a></h1> ]]>"}))))
+
 (deftest validation-on
   (is
     (thrown? Exception

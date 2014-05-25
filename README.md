@@ -46,6 +46,12 @@ Creating items with complex tags:
                   :category [{:domain "http://www.foo.com/bar"} "BAZ"]})
 ```
 
+Items can contain raw HTML if the tag is enclosed in `<![CDATA[ ... ]]>`:
+```clojure
+  {:title "HTML Item" 
+   :description "<![CDATA[ <h1><a href='http://foo/bar'>Foo</a></h1> ]]>"}
+```
+
 To get the raw data structure use:
 ```clojure
 (rss/channel {:title "Foo" :link "http://foo/bar" :description "some channel"}
