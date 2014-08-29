@@ -2,11 +2,11 @@
   (:use [clojure.xml :only [emit]]
         [clojure.set :only [difference]]
         [clojure.string :only [escape join]])
-  (:import java.util.Date java.text.SimpleDateFormat))
+  (:import java.util.Date java.util.Locale java.text.SimpleDateFormat))
 
 (defn- format-time [t]
   (when t
-    (.format (new SimpleDateFormat "EEE, dd MMM yyyy HH:mm:ss ZZZZ") t)))
+    (.format (new SimpleDateFormat "EEE, dd MMM yyyy HH:mm:ss ZZZZ" Locale/ENGLISH) t)))
 
 (defn- xml-str
   "Returns a string suitable for inclusion as an XML element. If the string
