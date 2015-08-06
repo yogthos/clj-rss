@@ -12,14 +12,14 @@ Leiningen
 
 ## Usage
 
-The `channel-xml` function accepts a map of tags representing a channel, followed by 0 or more maps for items (or a seq of items) and outputs an XML string. 
+The `channel-xml` function accepts a map of tags representing a channel, followed by 0 or more maps for items (or a seq of items) and outputs an XML string.
 Each item must be a map of valid RSS tags.
 
-The following characters in the content of :description and :title tags will be escaped: `<`, `&`, `>`, `"`. Both `:pubDate` and `:lastBuildDate` keys are expected to be instances of `java.util.Date` 
+The following characters in the content of :description and :title tags will be escaped: `<`, `&`, `>`, `"`. Both `:pubDate` and `:lastBuildDate` keys are expected to be instances of `java.util.Date`
 or one of its subclasses. These will be converted to standard RSS date strings in the resulting XML.
 
 If you need to get the data in a structured format, use `channel` instead.
- 
+
 ### Examples
 
 Creating a channel with some items:
@@ -44,11 +44,16 @@ Creating items with complex tags:
 (rss/channel-xml {:title "Foo" :link "http://foo/bar" :description "some channel"}
                  {:title "test"
                   :category [{:domain "http://www.foo.com/bar"} "BAZ"]})
+
+(rss/channel-xml {:title "Foo" :link "http://foo/bar" :description "some channel"}
+                 {:title "test"
+                  :category [[{:domain "http://www.microsoft.com"} "MSFT"]
+                             [{:domain "http://www.apple.com"} "AAPL"]]})
 ```
 
 Items can contain raw HTML if the tag is enclosed in `<![CDATA[ ... ]]>`:
 ```clojure
-  {:title "HTML Item" 
+  {:title "HTML Item"
    :description "<![CDATA[ <h1><a href='http://foo/bar'>Foo</a></h1> ]]>"}
 ```
 
@@ -63,10 +68,10 @@ Pass in `false` as first parameter to disable content validation:
 (rss/channel-xml false {:title "Foo" :link "http://foo/bar" :description "some channel"}
                        {:title "test"
                         :category [{:domain "http://www.foo.com/bar"} "BAZ"]})
-                                
+
 (rss/channel false {:title "Foo" :link "http://foo/bar" :description "some channel"}
                    {:title "test"})
-``` 
+```
 
 The output XML can be validated at http://validator.w3.org/feed/#validate_by_input
 

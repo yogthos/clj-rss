@@ -72,18 +72,27 @@
     (throw (new Exception (str "item " tags " must contain one of title or description!"))))
   (validate-tags (keys tags) #{:title :link :description :author :category :comments :enclosure :guid :pubDate :source}))
 
+
+
 (defn- make-tags [tags]
-  (for [[k v] (seq tags)]
-    (if (coll? v)
-      (apply-macro clj-rss.core/tag (into [k] v))
-      (tag k (cond
-               (some #{k} [:pubDate :lastBuildDate]) (format-time v)
-               (some #{k} [:description :title]) (xml-str v)
-               :else v)))))
+  (flatten
+   (for [[k v] (seq tags)]
+    (cond
+     (and (coll? v) (or (seq? (first v))
+                        (list? (first v))
+                        (vector? (first v))))
+     (map (fn [v] (make-tags {k v})) v)
+     (coll? v)
+     (apply-macro clj-rss.core/tag (into [k] v))
+     :else
+     (tag k (cond
+             (some #{k} [:pubDate :lastBuildDate]) (format-time v)
+             (some #{k} [:description :title]) (xml-str v)
+             :else v))))))
 
 
 (defn- item [validate? tags]
-  (if validate? (validate-item (dissoc-nil tags)))
+  (when validate? (validate-item (dissoc-nil tags)))
   {:tag :item
    :attrs nil
    :content (make-tags (dissoc-nil tags))})
