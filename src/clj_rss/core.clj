@@ -78,12 +78,10 @@
   (flatten
    (for [[k v] (seq tags)]
     (cond
-     (and (coll? v) (or (seq? (first v))
-                        (list? (first v))
-                        (vector? (first v))))
-     (map (fn [v] (make-tags {k v})) v)
-     (coll? v)
+     (and (coll? v) (map? (first v)))
      (apply-macro clj-rss.core/tag (into [k] v))
+     (coll? v)
+     (map (fn [v] (make-tags {k v})) v)
      :else
      (tag k (cond
              (some #{k} [:pubDate :lastBuildDate]) (format-time v)
