@@ -49,6 +49,10 @@ Creating items with complex tags:
                  {:title "test"
                   :category [[{:domain "http://www.microsoft.com"} "MSFT"]
                              [{:domain "http://www.apple.com"} "AAPL"]]})
+
+(channel-xml {:title "Foo" :link "http://foo/bar" :description "some channel"}
+              {:title "test"
+              :category ["MSFT" "AAPL"]})                             
 ```
 
 Items can contain raw HTML if the tag is enclosed in `<![CDATA[ ... ]]>`:
