@@ -50,7 +50,7 @@ Creating items with complex tags:
                   :category [[{:domain "http://www.microsoft.com"} "MSFT"]
                              [{:domain "http://www.apple.com"} "AAPL"]]})
 
-(channel-xml {:title "Foo" :link "http://foo/bar" :description "some channel"}
+(rss/channel-xml {:title "Foo" :link "http://foo/bar" :description "some channel"}
               {:title "test"
               :category ["MSFT" "AAPL"]})                             
 ```
