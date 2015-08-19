@@ -32,9 +32,9 @@ Creating a channel with some items:
                  {:description "bar"})
 ```
 
-Creating a feed from a seq of items:
+Creating a feed from a sequence of items:
 ```clojure
-(let [items '({:title "Foo"} {:title "Bar"} {:title "Baz"})]
+(let [items [{:title "Foo"} {:title "Bar"} {:title "Baz"}]]
   (rss/channel {:title "Foo" :link "http://foo/bar" :description "some channel"}
                items))
 ```
