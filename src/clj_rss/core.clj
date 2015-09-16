@@ -85,7 +85,7 @@
      :else
      (tag k (cond
              (some #{k} [:pubDate :lastBuildDate]) (format-time v)
-             (some #{k} [:description :title]) (xml-str v)
+             (some #{k} [:description :title :link]) (xml-str v)
              :else v))))))
 
 
