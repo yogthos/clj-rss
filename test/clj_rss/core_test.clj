@@ -5,7 +5,7 @@
 
 (deftest proper-message
   (is
-   (= "<?xml version='1.0' encoding='UTF-8'?>\n<rss version='2.0' xmlns:atom='http://www.w3.org/2005/Atom'>\n<channel>\n<atom:link href='http://foo/bar' rel='self' type='application/rss+xml'/>\n<title>\nFoo\n</title>\n<link>\nhttp://foo/bar\n</link>\n<description>\nsome channel\n</description>\n<generator>\nclj-rss\n</generator>\n<item>\n<title>\nFoo\n</title>\n</item>\n<item>\n<title>\npost\n</title>\n<author>\nYogthos\n</author>\n</item>\n<item>\n<description>\nbar\n</description>\n</item>\n</channel>\n</rss>\n"
+   (= "<?xml version='1.0' encoding='UTF-8'?><rss version='2.0' xmlns:atom='http://www.w3.org/2005/Atom'><channel><atom:link href='http://foo/bar' rel='self' type='application/rss+xml'/><title>Foo</title><link>http://foo/bar</link><description>some channel</description><generator>clj-rss</generator><item><title>Foo</title></item><item><title>post</title><author>Yogthos</author></item><item><description>bar</description></item></channel></rss>"
       (channel-xml {:title "Foo" :link "http://foo/bar" :description "some channel"}
                    {:title "Foo"}
                    {:title "post" :author "Yogthos"}
@@ -46,13 +46,13 @@
                          {:link "http://foo"}))))
 
 (deftest complex-tag
-  (is (= "<?xml version='1.0' encoding='UTF-8'?>\n<rss version='2.0' xmlns:atom='http://www.w3.org/2005/Atom'>\n<channel>\n<atom:link href='http://foo/bar' rel='self' type='application/rss+xml'/>\n<title>\nFoo\n</title>\n<link>\nhttp://foo/bar\n</link>\n<description>\nsome channel\n</description>\n<generator>\nclj-rss\n</generator>\n<item>\n<title>\ntest\n</title>\n<category domain='http://www.fool.com/cusips'>\nMSFT\n</category>\n</item>\n</channel>\n</rss>\n"
+  (is (= "<?xml version='1.0' encoding='UTF-8'?><rss version='2.0' xmlns:atom='http://www.w3.org/2005/Atom'><channel><atom:link href='http://foo/bar' rel='self' type='application/rss+xml'/><title>Foo</title><link>http://foo/bar</link><description>some channel</description><generator>clj-rss</generator><item><title>test</title><category domain='http://www.fool.com/cusips'>MSFT</category></item></channel></rss>"
          (channel-xml {:title "Foo" :link "http://foo/bar" :description "some channel"}
                       {:title "test"
                        :category [{:domain "http://www.fool.com/cusips"} "MSFT"]}))))
 
 (deftest cdata-tag
-  (is (= "<?xml version='1.0' encoding='UTF-8'?>\n<rss version='2.0' xmlns:atom='http://www.w3.org/2005/Atom'>\n<channel>\n<atom:link href='http://foo/bar' rel='self' type='application/rss+xml'/>\n<title>\nFoo\n</title>\n<link>\nhttp://foo/bar\n</link>\n<description>\nsome channel\n</description>\n<generator>\nclj-rss\n</generator>\n<item>\n<title>\nHTML Item\n</title>\n<description>\n<![CDATA[ <h1><a href='http://foo/bar'>Foo</a></h1> ]]>\n</description>\n</item>\n</channel>\n</rss>\n"
+  (is (= "<?xml version='1.0' encoding='UTF-8'?><rss version='2.0' xmlns:atom='http://www.w3.org/2005/Atom'><channel><atom:link href='http://foo/bar' rel='self' type='application/rss+xml'/><title>Foo</title><link>http://foo/bar</link><description>some channel</description><generator>clj-rss</generator><item><title>HTML Item</title><description><![CDATA[ <h1><a href='http://foo/bar'>Foo</a></h1> ]]></description></item></channel></rss>"
          (channel-xml {:title "Foo" :link "http://foo/bar" :description "some channel"}
                       {:title "HTML Item" :description "<![CDATA[ <h1><a href='http://foo/bar'>Foo</a></h1> ]]>"}))))
 
@@ -64,7 +64,7 @@
                          {:foo "Foo"}))))
 
 (deftest validation-off
-  (is (= "<?xml version='1.0' encoding='UTF-8'?>\n<rss version='2.0' xmlns:atom='http://www.w3.org/2005/Atom'>\n<channel>\n<atom:link href='http://foo/bar' rel='self' type='application/rss+xml'/>\n<title>\nFoo\n</title>\n<description>\nFoo\n</description>\n<link>\nhttp://foo/bar\n</link>\n<generator>\nclj-rss\n</generator>\n<item>\n<foo>\nFoo\n</foo>\n</item>\n</channel>\n</rss>\n"
+  (is (= "<?xml version='1.0' encoding='UTF-8'?><rss version='2.0' xmlns:atom='http://www.w3.org/2005/Atom'><channel><atom:link href='http://foo/bar' rel='self' type='application/rss+xml'/><title>Foo</title><description>Foo</description><link>http://foo/bar</link><generator>clj-rss</generator><item><foo>Foo</foo></item></channel></rss>"
          (channel-xml false
                       {:title "Foo" :description "Foo" :link "http://foo/bar"}
                       {:foo "Foo"}))))

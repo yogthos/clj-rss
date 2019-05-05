@@ -1,6 +1,5 @@
 (ns clj-rss.core
-  (:use [clojure.xml :only [emit]]
-        [clojure.set :only [difference]]
+  (:use [clojure.set :only [difference]]
         [clojure.string :only [escape join]])
   (:import java.util.Date java.util.Locale java.text.SimpleDateFormat))
 
@@ -144,6 +143,26 @@
     (apply channel' (cons true content))
     :else
     (apply channel' content)))
+
+(defn- emit-element [e]
+  (if (instance? String e)
+    (print e)
+    (do
+      (print (str "<" (name (:tag e))))
+      (when (:attrs e)
+	(doseq [attr (:attrs e)]
+	  (print (str " " (name (key attr)) "='" (val attr)"'"))))
+      (if (:content e)
+	(do
+	  (print ">")
+	  (doseq [c (:content e)]
+	    (emit-element c))
+	  (print (str "</" (name (:tag e)) ">")))
+	(print "/>")))))
+
+(defn- emit [x]
+  (print "<?xml version='1.0' encoding='UTF-8'?>")
+  (emit-element x))
 
 (defn channel-xml
   "channel accepts a map of tags followed by 0 or more items and outputs an XML string, see channel docs for detailed description"
