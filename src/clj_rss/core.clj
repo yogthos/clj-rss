@@ -1,5 +1,5 @@
 (ns clj-rss.core
-  (:use [clojure.xml :only [emit]]
+  (:use [clojure.data.xml :only [emit-str cdata]]
         [clojure.set :only [difference]]
         [clojure.string :only [escape join]])
   (:import java.util.Date java.util.Locale java.text.SimpleDateFormat))
@@ -9,18 +9,16 @@
     (.format (new SimpleDateFormat "EEE, dd MMM yyyy HH:mm:ss ZZZZ" Locale/ENGLISH) t)))
 
 (defn- xml-str
-  "Returns a string suitable for inclusion as an XML element. If the string
-  is wrapped in <![CDATA[ ... ]]>, do not escape special characters."
+  "Returns a value suitable for inclusion as an XML element. If the string
+  is wrapped in <![CDATA[ ... ]]>, remove the tags and wrap in a CData record"
   [^String s]
   (if (and (.startsWith s "<![CDATA[")
            (.endsWith s "]]>"))
-    s
-    (if s
-      (let [escapes {\< "&lt;",
-                     \> "&gt;",
-                     \& "&amp;",
-                     \" "&quot;"}]
-        (escape s escapes)))))
+    (-> s
+        (.replace "<![CDATA[" "")
+        (.replace "]]>" "")
+        cdata)
+    s))
 
 (defmacro tag [id & xs]
   `(let [attrs# (map? (first '~xs))
@@ -148,4 +146,4 @@
 (defn channel-xml
   "channel accepts a map of tags followed by 0 or more items and outputs an XML string, see channel docs for detailed description"
   [& content]
-  (with-out-str (emit (apply channel content))))
+  (emit-str (apply channel content)))
