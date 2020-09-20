@@ -1,8 +1,9 @@
 (ns clj-rss.core
-  (:use [clojure.data.xml :only [emit-str cdata]]
-        [clojure.set :only [difference]]
-        [clojure.string :only [escape join]])
-  (:import java.util.Date java.util.Locale java.text.SimpleDateFormat))
+  (:require
+   [clojure.data.xml :refer [emit-str cdata]]
+   [clojure.set :refer [difference]]
+   [clojure.string :refer [join]])
+  (:import java.util.Locale java.text.SimpleDateFormat))
 
 (defn- format-time [t]
   (when t
@@ -33,8 +34,9 @@
 (defmacro apply-macro [macro args]
    `(apply (functionize ~macro) ~args))
 
-(defn dissoc-nil [map]
+(defn dissoc-nil
   "Returns a map containing only those entries in m whose val is not nil"
+  [map]
   (let [non-nil-keys (for [[k v] map :when (not (nil? v))] k)]
     (select-keys map non-nil-keys)))
 
@@ -66,7 +68,7 @@
                    :webMaster}))
 
 (defn- validate-item [tags]
-  (if (not (or (:title tags) (:description tags)))
+  (when (not (or (:title tags) (:description tags)))
     (throw (new Exception (str "item " tags " must contain one of title or description!"))))
   (validate-tags (keys tags) #{:title :link :description :author :category :comments :enclosure :guid :pubDate :source}))
 
