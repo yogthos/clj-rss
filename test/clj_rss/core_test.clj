@@ -5,50 +5,61 @@
 
 (deftest proper-message
   (is
-   (= "<?xml version=\"1.0\" encoding=\"UTF-8\"?><rss version=\"2.0\" xmlns:atom=\"http://www.w3.org/2005/Atom\"><channel><atom:link href=\"http://foo/bar\" rel=\"self\" type=\"application/rss+xml\"/><title>Foo</title><link>http://foo/bar</link><description>some channel</description><generator>clj-rss</generator><item><title>Foo</title></item><item><title>post</title><author>Yogthos</author></item><item><description>bar</description></item></channel></rss>"
-      (channel-xml {:title "Foo" :link "http://foo/bar" :description "some channel"}
-                   {:title "Foo"}
-                   {:title "post" :author "Yogthos"}
-                   {:description "bar"})
-      (channel-xml {:title "Foo" :link "http://foo/bar" :description "some channel"}
-                   {:title "Foo" :link nil :enclosure nil}
-                   {:title "post" :author "Yogthos"}
-                   {:description "bar"})
-      (channel-xml {:title "Foo" :link "http://foo/bar" :description "some channel"}
-                   [{:title "Foo"}
+    (= "<?xml version=\"1.0\" encoding=\"UTF-8\"?><rss version=\"2.0\" xmlns:atom=\"http://www.w3.org/2005/Atom\"><channel><atom:link href=\"http://foo/bar\" rel=\"self\" type=\"application/rss+xml\"/><title>Foo</title><link>http://foo/bar</link><description>some channel</description><generator>clj-rss</generator><item><title>Foo</title></item><item><title>post</title><author>Yogthos</author></item><item><description>bar</description></item></channel></rss>"
+       (channel-xml {:title "Foo" :link "http://foo/bar" :description "some channel"}
+                    {:title "Foo"}
                     {:title "post" :author "Yogthos"}
-                    {:description "bar"}]))))
+                    {:description "bar"})
+       (channel-xml {:title "Foo" :link "http://foo/bar" :description "some channel"}
+                    {:title "Foo" :link nil :enclosure nil}
+                    {:title "post" :author "Yogthos"}
+                    {:description "bar"})
+       (channel-xml {:title "Foo" :link "http://foo/bar" :description "some channel"}
+                    [{:title "Foo"}
+                     {:title "post" :author "Yogthos"}
+                     {:description "bar"}]))))
+
+
+(deftest image-tag
+  (is
+    (= "<?xml version=\"1.0\" encoding=\"UTF-8\"?><rss version=\"2.0\" xmlns:atom=\"http://www.w3.org/2005/Atom\"><channel><atom:link href=\"http://x\" rel=\"self\" type=\"application/rss+xml\"/><title>Foo</title><link>http://x</link><description>some channel</description><generator>clj-rss</generator><image><title>image</title><url>http://foo.bar</url><link>http://bar.baz</link></image><item><title>foo</title><link>bar</link></item></channel></rss>"
+       (channel-xml {:title "Foo" :link "http://x" :description "some channel"}
+                    {:type  :image
+                     :title "image"
+                     :url   "http://foo.bar"
+                     :link  "http://bar.baz"}
+                    {:title "foo" :link "bar"}))))
 
 (deftest invalid-channel-tag
   (is
-   (thrown? Exception
-            (channel-xml {:title "Foo" :link "http://foo/bar" :description "some channel" :baz "invalid-tag"}
-                         {:title "Foo"}
-                         {:title "post" :author "Yogthos"}
-                         {:description "bar"}))))
+    (thrown? Exception
+             (channel-xml {:title "Foo" :link "http://foo/bar" :description "some channel" :baz "invalid-tag"}
+                          {:title "Foo"}
+                          {:title "post" :author "Yogthos"}
+                          {:description "bar"}))))
 
 (deftest missing-channel-tag
   (is
-   (thrown? Exception
-            (channel-xml {:title "Foo" :link "http://foo/bar"}
-                         {:title "Foo"}))))
+    (thrown? Exception
+             (channel-xml {:title "Foo" :link "http://foo/bar"}
+                          {:title "Foo"}))))
 
 (deftest invalid-item-tag
   (is
-   (thrown? Exception
-            (channel-xml {:title "Foo" :link "http://foo/bar" :description "some channel"}
-                         {:title "Foo" :invalid-tag "foo"}))))
+    (thrown? Exception
+             (channel-xml {:title "Foo" :link "http://foo/bar" :description "some channel"}
+                          {:title "Foo" :invalid-tag "foo"}))))
 
 (deftest missing-item-tag
   (is
-   (thrown? Exception
-            (channel-xml {:title "Foo" :link "http://foo/bar" :description "some channel"}
-                         {:link "http://foo"}))))
+    (thrown? Exception
+             (channel-xml {:title "Foo" :link "http://foo/bar" :description "some channel"}
+                          {:link "http://foo"}))))
 
 (deftest complex-tag
   (is (= "<?xml version=\"1.0\" encoding=\"UTF-8\"?><rss version=\"2.0\" xmlns:atom=\"http://www.w3.org/2005/Atom\"><channel><atom:link href=\"http://foo/bar\" rel=\"self\" type=\"application/rss+xml\"/><title>Foo</title><link>http://foo/bar</link><description>some channel</description><generator>clj-rss</generator><item><title>test</title><category domain=\"http://www.fool.com/cusips\">MSFT</category></item></channel></rss>"
          (channel-xml {:title "Foo" :link "http://foo/bar" :description "some channel"}
-                      {:title "test"
+                      {:title    "test"
                        :category [{:domain "http://www.fool.com/cusips"} "MSFT"]}))))
 
 (deftest cdata-tag
@@ -58,10 +69,10 @@
 
 (deftest validation-on
   (is
-   (thrown? Exception
-            (channel-xml true
-                         {:title "Foo" :description "Foo" :link "http://foo/bar"}
-                         {:foo "Foo"}))))
+    (thrown? Exception
+             (channel-xml true
+                          {:title "Foo" :description "Foo" :link "http://foo/bar"}
+                          {:foo "Foo"}))))
 
 (deftest validation-off
   (is (= "<?xml version=\"1.0\" encoding=\"UTF-8\"?><rss version=\"2.0\" xmlns:atom=\"http://www.w3.org/2005/Atom\"><channel><atom:link href=\"http://foo/bar\" rel=\"self\" type=\"application/rss+xml\"/><title>Foo</title><description>Foo</description><link>http://foo/bar</link><generator>clj-rss</generator><item><foo>Foo</foo></item></channel></rss>"
@@ -72,4 +83,4 @@
 (deftest test-dissoc-nil
   (is (= {:title "Foo" :description "Bar"}
          (dissoc-nil {:title "Foo" :description "Bar"
-                      :link nil :category nil}))))
+                      :link  nil :category nil}))))

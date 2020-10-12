@@ -32,6 +32,16 @@ Creating a channel with some items:
                  {:description "bar"})
 ```
 
+image tags can be inserted by providing the `:type` key:
+```clojure
+(channel-xml {:title "Foo" :link "http://x" :description "some channel"}
+             {:type  :image
+              :title "image"
+              :url   "http://foo.bar"
+              :link  "http://bar.baz"}
+             {:title "foo" :link "bar"}) 
+```
+
 Creating a feed from a sequence of items:
 ```clojure
 (let [items [{:title "Foo"} {:title "Bar"} {:title "Baz"}]]
