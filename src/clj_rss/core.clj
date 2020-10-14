@@ -1,9 +1,10 @@
 (ns clj-rss.core
   (:require
-   [clojure.data.xml :refer [emit-str cdata]]
-   [clojure.set :refer [difference]]
-   [clojure.string :refer [join]])
-  (:import java.util.Locale java.text.SimpleDateFormat))
+    [clojure.data.xml :refer [emit-str cdata]]
+    [clojure.set :refer [difference]]
+    [clojure.string :refer [join]])
+  (:import java.util.Locale
+           java.text.SimpleDateFormat))
 
 (defn- format-time [t]
   (when t
@@ -24,15 +25,15 @@
 (defmacro tag [id & xs]
   `(let [attrs# (map? (first '~xs))
          content# [~@xs]]
-     {:tag ~id
-      :attrs (if attrs# (first '~xs))
+     {:tag     ~id
+      :attrs   (if attrs# (first '~xs))
       :content (if attrs# (rest content#) content#)}))
 
 (defmacro functionize [macro]
   `(fn [& args#] (eval (cons '~macro args#))))
 
 (defmacro apply-macro [macro args]
-   `(apply (functionize ~macro) ~args))
+  `(apply (functionize ~macro) ~args))
 
 (defn dissoc-nil
   "Returns a map containing only those entries in m whose val is not nil"
@@ -68,32 +69,32 @@
                    :webMaster}))
 
 (defn- validate-item [tags]
-  (when (not (or (:title tags) (:description tags)))
+  (when (not (or (:title tags) (:image tags) (:description tags)))
     (throw (new Exception (str "item " tags " must contain one of title or description!"))))
-  (validate-tags (keys tags) #{:title :link :description :author :category :comments :enclosure :guid :pubDate :source}))
+  (validate-tags (keys tags) #{:type :image :url :title :link :description :author :category :comments :enclosure :guid :pubDate :source}))
 
 
 
 (defn- make-tags [tags]
   (flatten
-   (for [[k v] (seq tags)]
-    (cond
-     (and (coll? v) (map? (first v)))
-     (apply-macro clj-rss.core/tag (into [k] v))
-     (coll? v)
-     (map (fn [v] (make-tags {k v})) v)
-     :else
-     (tag k (cond
-             (some #{k} [:pubDate :lastBuildDate]) (format-time v)
-             (some #{k} [:description :title :link :author]) (xml-str v)
-             :else v))))))
+    (for [[k v] (seq tags)]
+      (cond
+        (and (coll? v) (map? (first v)))
+        (apply-macro clj-rss.core/tag (into [k] v))
+        (coll? v)
+        (map (fn [v] (make-tags {k v})) v)
+        :else
+        (tag k (cond
+                 (some #{k} [:pubDate :lastBuildDate]) (format-time v)
+                 (some #{k} [:description :title :link :author]) (xml-str v)
+                 :else v))))))
 
 
 (defn- item [validate? tags]
   (when validate? (validate-item (dissoc-nil tags)))
-  {:tag :item
+  {:tag (or (:type tags) :item)
    :attrs nil
-   :content (make-tags (dissoc-nil tags))})
+   :content (make-tags (dissoc-nil (dissoc tags :type)))})
 
 (defn- channel'
   "channel accepts a map of tags followed by 0 or more items
@@ -119,22 +120,22 @@
   official RSS specification: http://cyber.law.harvard.edu/rss/rss.html"
   [validate? tags & items]
   (when validate? (validate-channel tags :title :link :description))
-  {:tag :rss
-   :attrs {:version "2.0"
+  {:tag   :rss
+   :attrs {:version     "2.0"
            "xmlns:atom" "http://www.w3.org/2005/Atom"}
    :content
-   [{:tag :channel
-     :attrs nil
-     :content (concat
-                [{:tag "atom:link"
-                  :attrs {:href (:link tags)
-                          :rel "self"
-                          :type "application/rss+xml"}}]
-                (make-tags (conj tags {:generator "clj-rss"}))
-                (->> items
-                     flatten
-                     (map dissoc-nil)
-                     (map (partial item validate?))))}]})
+          [{:tag     :channel
+            :attrs   nil
+            :content (concat
+                       [{:tag   "atom:link"
+                         :attrs {:href (:link tags)
+                                 :rel  "self"
+                                 :type "application/rss+xml"}}]
+                       (make-tags (conj tags {:generator "clj-rss"}))
+                       (->> items
+                            flatten
+                            (map dissoc-nil)
+                            (map (partial item validate?))))}]})
 
 (defn channel [& content]
   (cond
