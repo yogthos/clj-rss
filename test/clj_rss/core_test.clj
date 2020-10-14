@@ -20,6 +20,30 @@
                      {:description "bar"}]))))
 
 
+(deftest escaping-test
+  (is (=
+        {:tag     :rss,
+         :attrs   {:version "2.0", "xmlns:atom" "http://www.w3.org/2005/Atom"},
+         :content [{:tag     :channel,
+                    :attrs   nil,
+                    :content [{:tag "atom:link", :attrs {:href "http://foo", :rel "self", :type "application/rss+xml"}}
+                              {:content ["foo"], :attrs nil, :tag :title}
+                              {:content ["http://foo"], :attrs nil, :tag :link}
+                              {:content ["bar"], :attrs nil, :tag :description}
+                              {:content ["clj-rss"], :attrs nil, :tag :generator}
+                              {:tag     :image,
+                               :attrs   nil,
+                               :content [{:content [#clojure.data.xml.node.CData{:content " title "}], :attrs nil, :tag :title}
+                                         {:content ["<![CDATA[ url ]]>"], :attrs nil, :tag :url}
+                                         {:content [#clojure.data.xml.node.CData{:content " link "}], :attrs nil, :tag :link}]}]}]}
+
+        (channel
+          {:title "foo" :link "http://foo" :description "bar"}
+          {:type  :image
+           :title "<![CDATA[ title ]]>"
+           :url   "<![CDATA[ url ]]>"
+           :link  "<![CDATA[ link ]]>"}))))
+
 (deftest image-tag
   (is
     (= "<?xml version=\"1.0\" encoding=\"UTF-8\"?><rss version=\"2.0\" xmlns:atom=\"http://www.w3.org/2005/Atom\"><channel><atom:link href=\"http://x\" rel=\"self\" type=\"application/rss+xml\"/><title>Foo</title><link>http://x</link><description>some channel</description><generator>clj-rss</generator><image><title>image</title><url>http://foo.bar</url><link>http://bar.baz</link></image><item><title>foo</title><link>bar</link></item></channel></rss>"
