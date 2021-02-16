@@ -1,8 +1,8 @@
 (ns clj-rss.core
   (:require
-    [clojure.data.xml :refer [emit-str cdata]]
-    [clojure.set :refer [difference]]
-    [clojure.string :refer [join]])
+   [clojure.data.xml :refer [emit-str cdata]]
+   [clojure.set :refer [difference]]
+   [clojure.string :refer [join]])
   (:import java.util.Locale
            java.text.SimpleDateFormat))
 
@@ -122,20 +122,21 @@
   (when validate? (validate-channel tags :title :link :description))
   {:tag   :rss
    :attrs {:version     "2.0"
-           "xmlns:atom" "http://www.w3.org/2005/Atom"}
+           "xmlns:atom" "http://www.w3.org/2005/Atom"
+           "xmlns:content""http://purl.org/rss/1.0/modules/content/"}
    :content
-          [{:tag     :channel
-            :attrs   nil
-            :content (concat
-                       [{:tag   "atom:link"
-                         :attrs {:href (:link tags)
-                                 :rel  "self"
-                                 :type "application/rss+xml"}}]
-                       (make-tags (conj tags {:generator "clj-rss"}))
-                       (->> items
-                            flatten
-                            (map dissoc-nil)
-                            (map (partial item validate?))))}]})
+   [{:tag     :channel
+     :attrs   nil
+     :content (concat
+               [{:tag   "atom:link"
+                 :attrs {:href (:link tags)
+                         :rel  "self"
+                         :type "application/rss+xml"}}]
+               (make-tags (conj tags {:generator "clj-rss"}))
+               (->> items
+                    flatten
+                    (map dissoc-nil)
+                    (map (partial item validate?))))}]})
 
 (defn channel [& content]
   (cond
