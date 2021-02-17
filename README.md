@@ -17,8 +17,8 @@ Leiningen
 The `channel-xml` function accepts a map of tags representing a channel, followed by 0 or more maps for items (or a seq of items) and outputs an XML string.
 Each item must be a map of valid RSS tags.
 
-The following characters in the content of :description and :title tags will be escaped: `<`, `&`, `>`, `"`. Both `:pubDate` and `:lastBuildDate` keys are expected to be instances of `java.util.Date`
-or one of its subclasses. These will be converted to standard RSS date strings in the resulting XML.
+The following characters in the content of :description, "content:encoded" and :title tags will be escaped: `<`, `&`, `>`, `"`. Both `:pubDate` and `:lastBuildDate` keys are expected to be instances
+of `java.util.Date` or one of its subclasses. These will be converted to standard RSS date strings in the resulting XML.
 
 If you need to get the data in a structured format, use `channel` instead.
 
@@ -31,7 +31,8 @@ Creating a channel with some items:
 (rss/channel-xml {:title "Foo" :link "http://foo/bar" :description "some channel"}
                  {:title "Foo"}
                  {:title "post" :author "author@foo.bar"}
-                 {:description "bar"})
+                 {:description "bar"}
+                 {:description "baz" "content:encoded" "Full content"})
 ```
 
 image tags can be inserted by providing the `:type` key:
@@ -70,7 +71,8 @@ Creating items with complex tags:
 Items can contain raw HTML if the tag is enclosed in `<![CDATA[ ... ]]>`:
 ```clojure
   {:title "HTML Item"
-   :description "<![CDATA[ <h1><a href='http://foo/bar'>Foo</a></h1> ]]>"}
+   :description "<![CDATA[ <h1><a href='http://foo/bar'>Foo</a></h1> ]]>"
+   "content:encoded" "<![CDATA[ <article><h1>Title</h1><p>Hello World</p></article> ]]>"}
 ```
 
 To get the raw data structure use:
