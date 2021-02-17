@@ -1,8 +1,8 @@
 (ns clj-rss.core
   (:require
-    [clojure.data.xml :refer [emit-str cdata]]
-    [clojure.set :refer [difference]]
-    [clojure.string :refer [join]])
+   [clojure.data.xml :refer [emit-str cdata]]
+   [clojure.set :refer [difference]]
+   [clojure.string :refer [join]])
   (:import java.util.Locale
            java.text.SimpleDateFormat))
 
@@ -71,30 +71,35 @@
 (defn- validate-item [tags]
   (when (not (or (:title tags) (:image tags) (:description tags)))
     (throw (new Exception (str "item " tags " must contain one of title or description!"))))
-  (validate-tags (keys tags) #{:type :image :url :title :link :description :author :category :comments :enclosure :guid :pubDate :source}))
+  (when (and (get tags "content:encoded") (not (:description tags)))
+    (throw (new Exception (str "item " tags " must contain a description since it contains a content:enclosed!"))))
+  (validate-tags (keys tags) #{:type :image :url :title :link :description "content:encoded" :author :category :comments :enclosure :guid :pubDate :source}))
 
 
 
 (defn- make-tags [tags]
   (flatten
-    (for [[k v] (seq tags)]
-      (cond
-        (and (coll? v) (map? (first v)))
-        (apply-macro clj-rss.core/tag (into [k] v))
-        (coll? v)
-        (map (fn [v] (make-tags {k v})) v)
-        :else
-        (tag k (cond
-                 (some #{k} [:pubDate :lastBuildDate]) (format-time v)
-                 (some #{k} [:description :title :link :author]) (xml-str v)
-                 :else v))))))
+   (for [[k v] (seq tags)]
+     (cond
+       (and (coll? v) (map? (first v)))
+       (apply-macro clj-rss.core/tag (into [k] v))
+       (coll? v)
+       (map (fn [v] (make-tags {k v})) v)
+       :else
+       (tag k (cond
+                (some #{k} [:pubDate :lastBuildDate]) (format-time v)
+                (some #{k} [:description :title :link :author "content:encoded"]) (xml-str v)
+                :else v))))))
 
 
 (defn- item [validate? tags]
   (when validate? (validate-item (dissoc-nil tags)))
-  {:tag (or (:type tags) :item)
-   :attrs nil
-   :content (make-tags (dissoc-nil (dissoc tags :type)))})
+  (let [;;"content:encoded" must come after "description"
+        content (get tags "content:encoded")
+        ordered (-> tags (dissoc "content:encoded") (assoc "content:encoded" content))]
+    {:tag (or (:type tags) :item)
+     :attrs nil
+     :content (make-tags (dissoc-nil (dissoc ordered :type)))}))
 
 (defn- channel'
   "channel accepts a map of tags followed by 0 or more items
@@ -122,20 +127,21 @@
   (when validate? (validate-channel tags :title :link :description))
   {:tag   :rss
    :attrs {:version     "2.0"
-           "xmlns:atom" "http://www.w3.org/2005/Atom"}
+           "xmlns:atom" "http://www.w3.org/2005/Atom"
+           "xmlns:content""http://purl.org/rss/1.0/modules/content/"}
    :content
-          [{:tag     :channel
-            :attrs   nil
-            :content (concat
-                       [{:tag   "atom:link"
-                         :attrs {:href (:link tags)
-                                 :rel  "self"
-                                 :type "application/rss+xml"}}]
-                       (make-tags (conj tags {:generator "clj-rss"}))
-                       (->> items
-                            flatten
-                            (map dissoc-nil)
-                            (map (partial item validate?))))}]})
+   [{:tag     :channel
+     :attrs   nil
+     :content (concat
+               [{:tag   "atom:link"
+                 :attrs {:href (:link tags)
+                         :rel  "self"
+                         :type "application/rss+xml"}}]
+               (make-tags (conj tags {:generator "clj-rss"}))
+               (->> items
+                    flatten
+                    (map dissoc-nil)
+                    (map (partial item validate?))))}]})
 
 (defn channel [& content]
   (cond
