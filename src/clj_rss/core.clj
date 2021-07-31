@@ -52,6 +52,7 @@
   (validate-tags (keys tags)
                  #{:title
                    :link
+                   :feed-url
                    :description
                    :category
                    :cloud
@@ -134,10 +135,10 @@
      :attrs   nil
      :content (concat
                [{:tag   "atom:link"
-                 :attrs {:href (:link tags)
+                 :attrs {:href (or (:feed-url tags) (:link tags))
                          :rel  "self"
                          :type "application/rss+xml"}}]
-               (make-tags (conj tags {:generator "clj-rss"}))
+               (make-tags (-> tags (dissoc :feed-url) (conj {:generator "clj-rss"})))
                (->> items
                     flatten
                     (map dissoc-nil)

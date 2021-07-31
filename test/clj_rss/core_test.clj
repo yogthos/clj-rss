@@ -5,7 +5,7 @@
 
 (deftest proper-message
   (is
-   (= "<?xml version=\"1.0\" encoding=\"UTF-8\"?><rss version=\"2.0\" xmlns:atom=\"http://www.w3.org/2005/Atom\" xmlns:content=\"http://purl.org/rss/1.0/modules/content/\"><channel><atom:link href=\"http://foo/bar\" rel=\"self\" type=\"application/rss+xml\"/><title>Foo</title><link>http://foo/bar</link><description>some channel</description><generator>clj-rss</generator><item><title>Foo</title></item><item><title>post</title><author>Yogthos</author></item><item><description>bar</description></item></channel></rss>"
+    (= "<?xml version=\"1.0\" encoding=\"UTF-8\"?><rss version=\"2.0\" xmlns:atom=\"http://www.w3.org/2005/Atom\" xmlns:content=\"http://purl.org/rss/1.0/modules/content/\"><channel><atom:link href=\"http://foo/bar\" rel=\"self\" type=\"application/rss+xml\"/><title>Foo</title><link>http://foo/bar</link><description>some channel</description><generator>clj-rss</generator><item><title>Foo</title></item><item><title>post</title><author>Yogthos</author></item><item><description>bar</description></item></channel></rss>"
        (channel-xml {:title "Foo" :link "http://foo/bar" :description "some channel"}
                     {:title "Foo"}
                     {:title "post" :author "Yogthos"}
@@ -22,37 +22,87 @@
 
 (deftest escaping-test
   (is (=
-       {:tag     :rss,
-        :attrs   {:version "2.0", "xmlns:atom" "http://www.w3.org/2005/Atom", "xmlns:content""http://purl.org/rss/1.0/modules/content/"},
-        :content [{:tag     :channel,
-                   :attrs   nil,
-                   :content [{:tag "atom:link", :attrs {:href "http://foo", :rel "self", :type "application/rss+xml"}}
-                             {:content ["foo"], :attrs nil, :tag :title}
-                             {:content ["http://foo"], :attrs nil, :tag :link}
-                             {:content ["bar"], :attrs nil, :tag :description}
-                             {:content ["clj-rss"], :attrs nil, :tag :generator}
-                             {:tag     :image,
-                              :attrs   nil,
-                              :content [{:content [#clojure.data.xml.node.CData{:content " title "}], :attrs nil, :tag :title}
-                                        {:content ["<![CDATA[ url ]]>"], :attrs nil, :tag :url}
-                                        {:content [#clojure.data.xml.node.CData{:content " link "}], :attrs nil, :tag :link}]}]}]}
+        {:tag     :rss,
+         :attrs   {:version "2.0", "xmlns:atom" "http://www.w3.org/2005/Atom", "xmlns:content" "http://purl.org/rss/1.0/modules/content/"},
+         :content [{:tag     :channel,
+                    :attrs   nil,
+                    :content [{:tag "atom:link", :attrs {:href "http://foo", :rel "self", :type "application/rss+xml"}}
+                              {:content ["foo"], :attrs nil, :tag :title}
+                              {:content ["http://foo"], :attrs nil, :tag :link}
+                              {:content ["bar"], :attrs nil, :tag :description}
+                              {:content ["clj-rss"], :attrs nil, :tag :generator}
+                              {:tag     :image,
+                               :attrs   nil,
+                               :content [{:content [#clojure.data.xml.node.CData{:content " title "}], :attrs nil, :tag :title}
+                                         {:content ["<![CDATA[ url ]]>"], :attrs nil, :tag :url}
+                                         {:content [#clojure.data.xml.node.CData{:content " link "}], :attrs nil, :tag :link}]}]}]}
 
-       (channel
-        {:title "foo" :link "http://foo" :description "bar"}
-        {:type  :image
-         :title "<![CDATA[ title ]]>"
-         :url   "<![CDATA[ url ]]>"
-         :link  "<![CDATA[ link ]]>"}))))
+        (channel
+          {:title "foo" :link "http://foo" :description "bar"}
+          {:type  :image
+           :title "<![CDATA[ title ]]>"
+           :url   "<![CDATA[ url ]]>"
+           :link  "<![CDATA[ link ]]>"}))))
 
 (deftest image-tag
   (is
-   (= "<?xml version=\"1.0\" encoding=\"UTF-8\"?><rss version=\"2.0\" xmlns:atom=\"http://www.w3.org/2005/Atom\" xmlns:content=\"http://purl.org/rss/1.0/modules/content/\"><channel><atom:link href=\"http://x\" rel=\"self\" type=\"application/rss+xml\"/><title>Foo</title><link>http://x</link><description>some channel</description><generator>clj-rss</generator><image><title>image</title><url>http://foo.bar</url><link>http://bar.baz</link></image><item><title>foo</title><link>bar</link></item></channel></rss>"
-      (channel-xml {:title "Foo" :link "http://x" :description "some channel"}
-                   {:type  :image
-                    :title "image"
-                    :url   "http://foo.bar"
-                    :link  "http://bar.baz"}
-                   {:title "foo" :link "bar"}))))
+    (= "<?xml version=\"1.0\" encoding=\"UTF-8\"?><rss version=\"2.0\" xmlns:atom=\"http://www.w3.org/2005/Atom\" xmlns:content=\"http://purl.org/rss/1.0/modules/content/\"><channel><atom:link href=\"http://x\" rel=\"self\" type=\"application/rss+xml\"/><title>Foo</title><link>http://x</link><description>some channel</description><generator>clj-rss</generator><image><title>image</title><url>http://foo.bar</url><link>http://bar.baz</link></image><item><title>foo</title><link>bar</link></item></channel></rss>"
+       (channel-xml {:title "Foo" :link "http://x" :description "some channel"}
+                    {:type  :image
+                     :title "image"
+                     :url   "http://foo.bar"
+                     :link  "http://bar.baz"}
+                    {:title "foo" :link "bar"}))))
+
+(deftest feed-url
+  (is
+    (=
+      {:tag     :rss
+       :attrs   {:version        "2.0"
+                 "xmlns:atom"    "http://www.w3.org/2005/Atom"
+                 "xmlns:content" "http://purl.org/rss/1.0/modules/content/"}
+       :content [{:tag     :channel
+                  :attrs   nil
+                  :content '({:tag "atom:link" :attrs {:href "http://foo" :rel "self" :type "application/rss+xml"}}
+                             {:content ["foo"] :attrs nil :tag :title}
+                             {:content ["http://foo"] :attrs nil :tag :link}
+                             {:content ["bar"] :attrs nil :tag :description}
+                             {:content ["clj-rss"] :attrs nil :tag :generator}
+                             {:tag     :image
+                              :attrs   nil
+                              :content ({:content ["Title"], :attrs nil :tag :title}
+                                        {:content ["http://bar"] :attrs nil :tag :url}
+                                        {:content ["http://baz"] :attrs nil :tag :link})})}]}
+      (channel
+        {:title "foo" :link "http://foo" :description "bar"}
+        {:type  :image
+         :title "Title"
+         :url   "http://bar"
+         :link  "http://baz"})))
+  (is
+    (=
+      {:tag     :rss
+       :attrs   {:version        "2.0"
+                 "xmlns:atom"    "http://www.w3.org/2005/Atom"
+                 "xmlns:content" "http://purl.org/rss/1.0/modules/content/"}
+       :content [{:tag     :channel
+                  :attrs   nil
+                  :content '({:tag "atom:link" :attrs {:href "http://feed-url" :rel "self" :type "application/rss+xml"}}
+                             {:content ["foo"] :attrs nil :tag :title}
+                             {:content ["http://foo"] :attrs nil :tag :link}
+                             {:content ["bar"] :attrs nil :tag :description}
+                             {:content ["clj-rss"] :attrs nil :tag :generator}
+                             {:tag     :image
+                              :attrs   nil
+                              :content ({:content ["Title"] :attrs nil :tag :title}
+                                        {:content ["http://bar"] :attrs nil :tag :url}
+                                        {:content ["http://baz"] :attrs nil :tag :link})})}]}
+      (channel
+        {:title "foo" :link "http://foo" :feed-url "http://feed-url" :description "bar"}
+        {:type  :image
+         :title "Title"
+         :url   "http://bar"
+         :link  "http://baz"}))))
 
 (deftest invalid-channel-tag
   (is

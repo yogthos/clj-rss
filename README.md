@@ -50,6 +50,14 @@ Creating a feed from a sequence of items:
 (let [items [{:title "Foo"} {:title "Bar"} {:title "Baz"}]]
   (rss/channel {:title "Foo" :link "http://foo/bar" :description "some channel"}
                items))
+
+;; Atom feed URL can be specified using :feed-url key: 
+(rss/channel
+  {:title "foo" :link "http://foo" :feed-url "http://feed-url" :description "bar"}
+  {:type  :image
+   :title "Title"
+   :url   "http://bar"
+   :link  "http://baz"})
 ```
 
 Creating items with complex tags:
