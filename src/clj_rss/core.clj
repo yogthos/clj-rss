@@ -87,10 +87,15 @@
        (coll? v)
        (map (fn [v] (make-tags {k v})) v)
        :else
-       (tag k (cond
-                (some #{k} [:pubDate :lastBuildDate]) (format-time v)
-                (some #{k} [:description :title :link :author "content:encoded"]) (xml-str v)
-                :else v))))))
+       (let [v (cond
+                 (some #{k} [:pubDate :lastBuildDate]) (format-time v)
+                 (some #{k} [:description :title :link :author "content:encoded"]) (xml-str v)
+                 :else v)]
+          (cond
+            (= k :guid)
+            (tag k {:isPermaLink "false"} v)
+            :else
+            (tag k v)))))))
 
 
 (defn- item [validate? tags]

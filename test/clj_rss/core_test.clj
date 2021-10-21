@@ -130,6 +130,14 @@
              (channel-xml {:title "Foo" :link "http://foo/bar" :description "some channel"}
                           {:link "http://foo"}))))
 
+(deftest item-with-a-guid-tag
+  (is
+   (=
+    "<?xml version=\"1.0\" encoding=\"UTF-8\"?><rss version=\"2.0\" xmlns:atom=\"http://www.w3.org/2005/Atom\" xmlns:content=\"http://purl.org/rss/1.0/modules/content/\"><channel><atom:link href=\"http://foo/bar\" rel=\"self\" type=\"application/rss+xml\"/><title>Foo</title><link>http://foo/bar</link><description>some channel</description><generator>clj-rss</generator><item><title>test</title><guid isPermaLink=\"false\">http://foo/bar</guid></item></channel></rss>"
+    (channel-xml {:title "Foo" :link "http://foo/bar" :description "some channel"}
+                 {:title "test"
+                  :guid "http://foo/bar"}))))
+
 (deftest complex-tag
   (is (= "<?xml version=\"1.0\" encoding=\"UTF-8\"?><rss version=\"2.0\" xmlns:atom=\"http://www.w3.org/2005/Atom\" xmlns:content=\"http://purl.org/rss/1.0/modules/content/\"><channel><atom:link href=\"http://foo/bar\" rel=\"self\" type=\"application/rss+xml\"/><title>Foo</title><link>http://foo/bar</link><description>some channel</description><generator>clj-rss</generator><item><title>test</title><category domain=\"http://www.fool.com/cusips\">MSFT</category></item></channel></rss>"
          (channel-xml {:title "Foo" :link "http://foo/bar" :description "some channel"}
