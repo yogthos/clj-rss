@@ -179,10 +179,7 @@
                (channel-xml {:title "Foo" :link "http://foo/bar" :description "some channel"}
                             {:title "test" "content:encoded" "LONG CONTENT"}))))
 
-(deftest format-time-supports-date-and-instant-objects
-  (let [inst      (java.time.Instant/now)
-        date      (java.util.Date/from inst)
-        test-date (fn [t] (channel-xml {:title "Foo" :link "http://foo/bar" :description "some channel" :lastBuildDate t}
-                                       {:title "Foo" :pubDate t}))]
-    (is (= (test-date inst)
-           (test-date date)))))
+(deftest format-time-supports-instant
+  (is (= "<?xml version=\"1.0\" encoding=\"UTF-8\"?><rss version=\"2.0\" xmlns:atom=\"http://www.w3.org/2005/Atom\" xmlns:content=\"http://purl.org/rss/1.0/modules/content/\"><channel><atom:link href=\"http://foo/bar\" rel=\"self\" type=\"application/rss+xml\"/><title>Foo</title><link>http://foo/bar</link><description>some channel</description><lastBuildDate>Thu, 01 Jan 1970 00:00:00 +0000</lastBuildDate><generator>clj-rss</generator><item><title>Foo</title><pubDate>Thu, 01 Jan 1970 00:00:00 +0000</pubDate></item></channel></rss>"
+         (channel-xml {:title "Foo" :link "http://foo/bar" :description "some channel" :lastBuildDate (java.time.Instant/ofEpochSecond 0)}
+                      {:title "Foo" :pubDate (java.time.Instant/ofEpochSecond 0)}))))

@@ -18,7 +18,7 @@ The `channel-xml` function accepts a map of tags representing a channel, followe
 Each item must be a map of valid RSS tags.
 
 The following characters in the content of :description, "content:encoded" and :title tags will be escaped: `<`, `&`, `>`, `"`. Both `:pubDate` and `:lastBuildDate` keys are expected to be instances
-of `java.util.Date` or one of its subclasses. These will be converted to standard RSS date strings in the resulting XML.
+of `java.time.Instant` or one of its subclasses. These will be converted to standard RSS date strings in the resulting XML.
 
 If you need to get the data in a structured format, use `channel` instead.
 
@@ -42,7 +42,7 @@ image tags can be inserted by providing the `:type` key:
               :title "image"
               :url   "http://foo.bar"
               :link  "http://bar.baz"}
-             {:title "foo" :link "bar"}) 
+             {:title "foo" :link "bar"})
 ```
 
 Creating a feed from a sequence of items:
@@ -51,7 +51,7 @@ Creating a feed from a sequence of items:
   (rss/channel {:title "Foo" :link "http://foo/bar" :description "some channel"}
                items))
 
-;; Atom feed URL can be specified using :feed-url key: 
+;; Atom feed URL can be specified using :feed-url key:
 (rss/channel
   {:title "foo" :link "http://foo" :feed-url "http://feed-url" :description "bar"}
   {:type  :image
@@ -73,7 +73,7 @@ Creating items with complex tags:
 
 (rss/channel-xml {:title "Foo" :link "http://foo/bar" :description "some channel"}
               {:title "test"
-              :category ["MSFT" "AAPL"]})                             
+              :category ["MSFT" "AAPL"]})
 ```
 
 Items can contain raw HTML if the tag is enclosed in `<![CDATA[ ... ]]>`:
