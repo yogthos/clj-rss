@@ -1,14 +1,15 @@
 (ns clj-rss.core
-  (:require
-   [clojure.data.xml :refer [emit-str cdata]]
-   [clojure.set :refer [difference]]
-   [clojure.string :refer [join]])
-  (:import java.util.Locale
-           java.text.SimpleDateFormat))
+  (:require [clojure.data.xml :refer [cdata emit-str]]
+            [clojure.set :refer [difference]]
+            [clojure.string :refer [join]])
+  (:import (java.time Instant ZoneOffset)
+           java.time.format.DateTimeFormatter
+           java.util.Locale))
 
-(defn- format-time [t]
+(defn- format-time [^Instant t]
   (when t
-    (.format (new SimpleDateFormat "EEE, dd MMM yyyy HH:mm:ss ZZZZ" Locale/ENGLISH) t)))
+    (.format (DateTimeFormatter/ofPattern "EEE, dd MMM yyyy HH:mm:ss ZZ" Locale/ENGLISH)
+             (.atOffset t ZoneOffset/UTC))))
 
 (defn- xml-str
   "Returns a value suitable for inclusion as an XML element. If the string
