@@ -7,8 +7,16 @@
            java.text.SimpleDateFormat))
 
 (defn- format-time [t]
-  (when t
-    (.format (new SimpleDateFormat "EEE, dd MMM yyyy HH:mm:ss ZZZZ" Locale/ENGLISH) t)))
+  (letfn [(fmt-t [date]
+            (.format (new SimpleDateFormat
+                          "EEE, dd MMM yyyy HH:mm:ss ZZZZ"
+                          Locale/ENGLISH) date))]
+    (when t
+      (cond
+        (instance? java.util.Date t)
+        (fmt-t t)
+        (instance? java.time.Instant t)
+        (fmt-t (java.util.Date/from t))))))
 
 (defn- xml-str
   "Returns a value suitable for inclusion as an XML element. If the string

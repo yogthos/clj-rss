@@ -178,3 +178,11 @@
   (is (thrown? Exception
                (channel-xml {:title "Foo" :link "http://foo/bar" :description "some channel"}
                             {:title "test" "content:encoded" "LONG CONTENT"}))))
+
+(deftest format-time-supports-date-and-instant-objects
+  (let [inst      (java.time.Instant/now)
+        date      (java.util.Date/from inst)
+        test-date (fn [t] (channel-xml {:title "Foo" :link "http://foo/bar" :description "some channel" :lastBuildDate t}
+                                       {:title "Foo" :pubDate t}))]
+    (is (= (test-date inst)
+           (test-date date)))))
