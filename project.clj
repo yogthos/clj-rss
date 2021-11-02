@@ -1,4 +1,4 @@
-(defproject clj-rss "0.2.9"
+(defproject clj-rss "0.3.0"
   :description "A library for generating RSS feeds from Clojure."
   :url "https://github.com/yogthos/clj-rss"
   :license {:name "Eclipse Public License"
