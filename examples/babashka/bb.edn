@@ -1,0 +1,3 @@
+{:paths ["script"]
+ :deps {local/clj-rss {:local/root "../.."}}}
+

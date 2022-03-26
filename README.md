@@ -22,6 +22,9 @@ of `java.time.Instant` or one of its subclasses. These will be converted to stan
 
 If you need to get the data in a structured format, use `channel` instead.
 
+The project works with babashka so you can generate rss feeds as a script.
+See examples/babashka directory.
+
 ### Examples
 
 Creating a channel with some items:
