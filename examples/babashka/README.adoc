@@ -1,0 +1,8 @@
+= clj-rss works with babashka
+
+[source,shell]
+--
+    git clone git@github.com:yogthos/clj-rss.git
+    cd examples/babshka
+    bb -m clj-rss-demo
+--

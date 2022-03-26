@@ -3,3 +3,11 @@ pom.xml
 /lib/
 /classes/
 .lein-deps-sum
+
+target
+
+.clj-kondo
+.cpcache
+.lsp
+.portal
+.lein-failures
