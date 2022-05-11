@@ -1,5 +1,5 @@
 (ns clj-rss.core
-  (:require [clojure.data.xml :refer [cdata emit-str]]
+  (:require [clojure.data.xml :refer [cdata element emit-str]]
             [clojure.set :refer [difference]]
             [clojure.string :refer [join]])
   (:import (java.time Instant ZoneOffset)
@@ -26,9 +26,9 @@
 (defmacro tag [id & xs]
   `(let [attrs# (map? (first '~xs))
          content# [~@xs]]
-     {:tag     ~id
-      :attrs   (if attrs# (first '~xs))
-      :content (if attrs# (rest content#) content#)}))
+     (element ~id
+              (if attrs# (first '~xs))
+              (if attrs# (rest content#) content#))))
 
 (defmacro functionize [macro]
   `(fn [& args#] (eval (cons '~macro args#))))
@@ -104,9 +104,9 @@
   (let [;;"content:encoded" must come after "description"
         content (get tags "content:encoded")
         ordered (-> tags (dissoc "content:encoded") (assoc "content:encoded" content))]
-    {:tag (or (:type tags) :item)
-     :attrs nil
-     :content (make-tags (dissoc-nil (dissoc ordered :type)))}))
+    (element (or (:type tags) :item)
+             nil
+             (make-tags (dissoc-nil (dissoc ordered :type))))))
 
 (defn- channel'
   "channel accepts a map of tags followed by 0 or more items
@@ -132,23 +132,22 @@
   official RSS specification: http://cyber.law.harvard.edu/rss/rss.html"
   [validate? tags & items]
   (when validate? (validate-channel tags :title :link :description))
-  {:tag   :rss
-   :attrs {:version     "2.0"
-           "xmlns:atom" "http://www.w3.org/2005/Atom"
-           "xmlns:content""http://purl.org/rss/1.0/modules/content/"}
-   :content
-   [{:tag     :channel
-     :attrs   nil
-     :content (concat
-               [{:tag   "atom:link"
-                 :attrs {:href (or (:feed-url tags) (:link tags))
-                         :rel  "self"
-                         :type "application/rss+xml"}}]
-               (make-tags (-> tags (dissoc :feed-url) (conj {:generator "clj-rss"})))
-               (->> items
-                    flatten
-                    (map dissoc-nil)
-                    (map (partial item validate?))))}]})
+  (element :rss
+           {:version     "2.0"
+            "xmlns:atom" "http://www.w3.org/2005/Atom"
+            "xmlns:content""http://purl.org/rss/1.0/modules/content/"}
+           [(element :channel
+                     nil
+                     (concat
+                       [(element "atom:link"
+                                 {:href (or (:feed-url tags) (:link tags))
+                                  :rel  "self"
+                                  :type "application/rss+xml"})]
+                       (make-tags (-> tags (dissoc :feed-url) (conj {:generator "clj-rss"})))
+                       (->> items
+                            flatten
+                            (map dissoc-nil)
+                            (map (partial item validate?)))))]))
 
 (defn channel [& content]
   (cond
