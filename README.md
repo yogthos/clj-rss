@@ -10,8 +10,6 @@ Leiningen
 
 [![Clojars Project](http://clojars.org/clj-rss/latest-version.svg)](http://clojars.org/clj-rss)
 
-**note**: clj-rss uses `org.clojure/data.xml` version 0.2.0-alpha6.
-
 ## Usage
 
 The `channel-xml` function accepts a map of tags representing a channel, followed by 0 or more maps for items (or a seq of items) and outputs an XML string.
